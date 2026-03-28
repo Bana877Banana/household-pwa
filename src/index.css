@@ -117,17 +117,40 @@ input:focus {
   align-self: stretch;
 }
 
+/* iOS WebKit: type=date は内在最小幅が広く、100% 指定でも親からはみ出すことがある */
 .field-date-shell {
-  display: block;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
   width: 100%;
   max-width: 100%;
   min-width: 0;
   overflow: hidden;
   border-radius: 10px;
+  box-sizing: border-box;
 }
 
-input.input-date,
-input[type="date"],
+/* flex 子で「内容最小幅」を無視して親幅に縛る（width:0 + flex:1 が効く） */
+.field-date-shell .input-date {
+  flex: 1 1 0%;
+  width: 0;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.35;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text);
+  /* ネイティブの過剰な最小幅・装飾を抑え、他フィールドと同じ枠内に収める */
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+input[type="date"]:not(.input-date),
 input[type="datetime-local"] {
   display: block;
   width: 100%;
@@ -137,21 +160,17 @@ input[type="datetime-local"] {
   margin: 0;
 }
 
-/* WebKit: 日付表示部がコンテナ幅に収まりやすくする */
-input[type="date"]::-webkit-date-and-time-value,
-input.input-date::-webkit-date-and-time-value {
+.field-date-shell .input-date::-webkit-date-and-time-value {
   text-align: left;
 }
 
-input[type="date"]::-webkit-datetime-edit,
-input.input-date::-webkit-datetime-edit {
+.field-date-shell .input-date::-webkit-datetime-edit {
   min-width: 0;
   padding: 0;
   margin: 0;
 }
 
-input[type="date"]::-webkit-datetime-edit-fields-wrapper,
-input.input-date::-webkit-datetime-edit-fields-wrapper {
+.field-date-shell .input-date::-webkit-datetime-edit-fields-wrapper {
   padding: 0;
 }
 
@@ -579,6 +598,7 @@ textarea.input-textarea {
   flex-direction: column;
   gap: 1rem;
   flex: 1;
+  min-width: 0;
 }
 
 .form-stack {
