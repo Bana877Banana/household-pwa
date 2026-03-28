@@ -1,0 +1,41 @@
+場所
+c:\Users\hana2\OneDrive\ドキュメント\Cursor\household-pwa
+
+起動手順
+依存関係（プロジェクトフォルダで）
+npm install
+環境変数
+.env.example をコピーして .env を作り、Supabase の Project URL と anon public key を入れます。
+<https://supabase.com/>
+ID hana23fus@gmail.com
+パス Hana23fus@
+データベースパス Hana8723fusa
+VITE_SUPABASE_URL=https://apkdlrxjplbmgeqwfsly.supabase.co
+VITE_SUPABASE_ANON_KEY=sb_publishable_a9dpRrJ9zQHIVSZcEHxxqg_0iHBRRsB
+
+ちなみにProject ID = apkd1rxjplbmgeqwfslv
+
+開発サーバー
+npm run dev
+ブラウザで表示された URL（通常 http://localhost:5173）を開きます。
+
+Supabase 側
+Authentication → Providers → Email を有効にする。
+テスト用ユーザーはダッシュボードの Users で追加するか、アプリにサインアップ画面を足すまで Authentication → Users → Add user で作成し、そのメール／パスワードでログインできます。
+画面の動き
+パス	内容
+/login	メール・パスワード → signInWithPassword。成功で / へ。
+/	ログイン済みならメール表示とログアウト。未ログインなら /login へ。
+AuthContext で getSession と onAuthStateChange を使い、セッションを共有しています。スタイルは iPhone 想定で safe-area と 48px 前後のボタン を入れてあります。
+
+主なファイル
+src/lib/supabase.ts — クライアント生成
+src/contexts/AuthContext.tsx — ログイン／ログアウト・セッション
+src/pages/LoginPage.tsx / HomePage.tsx
+src/App.tsx — BrowserRouter + ルート
+この環境では npm がパスに無く npm install は実行できていません。手元のターミナルで上記コマンドを実行して画面を確認してください。次に「サインアップ画面だけ」「家計グループ作成」など、足したい画面を指定してもらえれば続きを実装できます。
+
+
+サインアップページ
+<http://localhost:5173/signup>
+
