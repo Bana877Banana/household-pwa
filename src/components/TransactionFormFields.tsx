@@ -77,16 +77,19 @@ export function TransactionFormFields({
 
       <label className="field">
         <span className="label">日付</span>
-        <input
-          type="date"
-          name="occurred_on"
-          required
-          value={date}
-          onChange={(ev) => {
-            setDate(ev.target.value);
-            clearFieldError("date");
-          }}
-        />
+        <span className="field-date-shell">
+          <input
+            type="date"
+            name="occurred_on"
+            className="input-date"
+            required
+            value={date}
+            onChange={(ev) => {
+              setDate(ev.target.value);
+              clearFieldError("date");
+            }}
+          />
+        </span>
         {fieldErrors.date ? (
           <p className="field-error" role="alert">
             {fieldErrors.date}

@@ -82,6 +82,8 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
+  /* flex 子の input が内容最小幅で親をはみ出さないようにする */
+  min-width: 0;
 }
 
 .label {
@@ -107,12 +109,50 @@ input:focus {
   outline-offset: 0;
 }
 
-/* date のネイティブコントロールは最小幅が広く、狭い幅で親をはみ出しやすい */
+/* date のネイティブ UI は内在幅が広く、flex 内で親カードからはみ出しやすい（特に iOS） */
+.field > input:not([type="date"]):not([type="datetime-local"]),
+.field > select,
+.field > textarea.input-textarea {
+  min-width: 0;
+  align-self: stretch;
+}
+
+.field-date-shell {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+input.input-date,
 input[type="date"],
 input[type="datetime-local"] {
-  min-width: 0;
+  display: block;
+  width: 100%;
   max-width: 100%;
+  min-width: 0;
   box-sizing: border-box;
+  margin: 0;
+}
+
+/* WebKit: 日付表示部がコンテナ幅に収まりやすくする */
+input[type="date"]::-webkit-date-and-time-value,
+input.input-date::-webkit-date-and-time-value {
+  text-align: left;
+}
+
+input[type="date"]::-webkit-datetime-edit,
+input.input-date::-webkit-datetime-edit {
+  min-width: 0;
+  padding: 0;
+  margin: 0;
+}
+
+input[type="date"]::-webkit-datetime-edit-fields-wrapper,
+input.input-date::-webkit-datetime-edit-fields-wrapper {
+  padding: 0;
 }
 
 select,
@@ -546,6 +586,10 @@ textarea.input-textarea {
   flex-direction: column;
   gap: 1.1rem;
   min-width: 0;
+}
+
+.card.form-stack {
+  overflow-x: hidden;
 }
 
 .form-stack > .field {
