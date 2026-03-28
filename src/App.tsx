@@ -13,7 +13,6 @@ import { CategoriesPage } from "./pages/CategoriesPage";
 import { CategoryEditPage } from "./pages/CategoryEditPage";
 import { CategoryNewPage } from "./pages/CategoryNewPage";
 import { MonthlySummaryPage } from "./pages/MonthlySummaryPage";
-import { QrScanPage } from "./pages/QrScanPage";
 import { TransactionEditPage } from "./pages/TransactionEditPage";
 import { TransactionNewPage } from "./pages/TransactionNewPage";
 
@@ -35,7 +34,6 @@ export default function App() {
                 <Route path="/" element={<HomePage />} />
                 <Route path="/transactions/new" element={<TransactionNewPage />} />
                 <Route path="/transactions/:transactionId/edit" element={<TransactionEditPage />} />
-                <Route path="/scan" element={<QrScanPage />} />
                 <Route path="/summary/month" element={<MonthlySummaryPage />} />
                 <Route path="/categories/new" element={<CategoryNewPage />} />
                 <Route path="/categories/:categoryId/edit" element={<CategoryEditPage />} />

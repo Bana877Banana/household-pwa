@@ -9,9 +9,9 @@ import {
 import { useAuth } from "../contexts/AuthContext";
 import { useHousehold } from "../contexts/HouseholdContext";
 import { todayIsoDateLocal } from "../lib/formatDisplayDate";
-import type { QrPrefill } from "../lib/parseQrTransaction";
 import { validateTransactionForm } from "../lib/transactionValidation";
 import type { Category, TransactionType } from "../types/ledger";
+import type { TransactionFormPrefill } from "../types/transactionFormPrefill";
 
 export function TransactionNewPage() {
   const { user, loading: authLoading } = useAuth();
@@ -64,9 +64,9 @@ export function TransactionNewPage() {
   }, [household?.id, location.key]);
 
   useEffect(() => {
-    const st = location.state as { qrPrefill?: QrPrefill } | undefined;
-    if (!st?.qrPrefill) return;
-    const p = st.qrPrefill;
+    const st = location.state as { transactionFormPrefill?: TransactionFormPrefill } | undefined;
+    const p = st?.transactionFormPrefill;
+    if (!p) return;
     if (p.occurredOn) setDate(p.occurredOn);
     if (p.amountRaw) setAmountRaw(p.amountRaw);
     if (p.memo) setMemo(p.memo);

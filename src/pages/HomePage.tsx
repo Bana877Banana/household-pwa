@@ -81,9 +81,6 @@ export function HomePage() {
       <section className="card home-tools">
         <p className="label">管理</p>
         <div className="home-tools__stack">
-          <Link to="/scan" className="btn secondary home-tools__btn">
-            QR読取
-          </Link>
           <Link to="/summary/month" className="btn secondary home-tools__btn">
             月次集計
           </Link>
