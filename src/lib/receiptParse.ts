@@ -2,6 +2,8 @@
  * OCR テキストから「合計らしき金額」と補助情報を推定する（自動確定しない前提のヒューリスティクス）。
  */
 
+import { collectIncompleteYenVariants, normalizeAmountOcrRaw } from "./receiptAmountNormalize";
+
 export type TotalAmountCandidate = {
   /** 円（整数） */
   yen: number;
@@ -50,6 +52,9 @@ const TOTAL_LINE_HINTS_LONG_FIRST = [...TOTAL_LINE_HINTS].sort(
 
 type TokenHit = { yen: number; tokenScore: number; style: string };
 
+const AMOUNT_PASS_BASE = 228;
+const MIN_SCORE_TO_LIST = 8;
+
 /**
  * 1行から金額らしきトークンを拾い、自然な ¥2,063 形式を高スコア、長い生数字列は低スコアにする。
  */
@@ -96,6 +101,15 @@ export function extractScoredMoneyTokens(line: string): TokenHit[] {
     tryAdd(yen, 55 + 70, "桁区切り");
   }
 
+  // 会員番号・端末番号っぽい「カンマなしの長い生数字」は強く減点（除外まではしない）
+  const reBareLong = /(?:^|[^\d])(\d{5,9})(?!\d)/g;
+  while ((m = reBareLong.exec(n)) !== null) {
+    const yen = Number.parseInt(m[1], 10);
+    const len = m[1].length;
+    if (len >= 10) continue;
+    tryAdd(yen, len <= 4 ? 5 : -125, "生数字列（金額以外の可能性大）");
+  }
+
   return hits;
 }
 
@@ -114,12 +128,49 @@ function pickBestNeedle(line: string): { label: string; weight: number } | null 
   return null;
 }
 
+function applyAmountPassAndFallback(
+  best: Map<number, { score: number; reason: string }>,
+  amountPassTexts: string[],
+  put: (yen: number, score: number, reason: string) => void
+): void {
+  for (const raw of amountPassTexts) {
+    const norm = normalizeAmountOcrRaw(raw);
+    for (const hit of extractScoredMoneyTokens(norm)) {
+      put(hit.yen, AMOUNT_PASS_BASE + hit.tokenScore, `金額専用OCR（${hit.style}）`);
+    }
+    for (const v of collectIncompleteYenVariants(raw)) {
+      if (v >= 1 && v <= 99_999_999) {
+        put(v, AMOUNT_PASS_BASE - 15, "金額専用OCR（桁補完候補）");
+      }
+    }
+  }
+
+  const maxScore = best.size ? Math.max(...[...best.values()].map((v) => v.score)) : 0;
+  if (maxScore >= 290) return;
+
+  const joined = amountPassTexts.map(normalizeAmountOcrRaw).join("\n");
+  if (!joined.trim()) return;
+
+  let pick: { yen: number; ts: number } | null = null;
+  for (const hit of extractScoredMoneyTokens(joined)) {
+    if (hit.tokenScore < 100) continue;
+    if (!pick || hit.yen > pick.yen) pick = { yen: hit.yen, ts: hit.tokenScore };
+  }
+  if (pick && pick.yen > 0) {
+    put(pick.yen, 185 + pick.ts, "右側・金額列フォールバック");
+  }
+}
+
 /**
  * 全文OCR＋領域再OCRを結合したテキストから、スコア順で複数候補を返す。
+ * `amountPassTexts` は金額専用OCRの結果（右列・ホワイトリスト）で、ここを最優先に足し込む。
  */
-export function extractTotalCandidates(mergedOcrText: string): TotalAmountCandidate[] {
-  const text = mergedOcrText.normalize("NFKC");
-  const lines = text.split(/\r?\n/).map((l) => l.trim());
+export function extractTotalCandidates(
+  mergedOcrText: string,
+  amountPassTexts: string[] = []
+): TotalAmountCandidate[] {
+  const normalizedMain = normalizeAmountOcrRaw(mergedOcrText.normalize("NFKC"));
+  const lines = normalizedMain.split(/\r?\n/).map((l) => l.trim());
 
   const best = new Map<number, { score: number; reason: string }>();
 
@@ -136,6 +187,7 @@ export function extractTotalCandidates(mergedOcrText: string): TotalAmountCandid
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
     if (!line) continue;
+    if (/^\d{5,9}$/.test(line)) continue;
     const needleHit = pickBestNeedle(line);
     if (!needleHit) continue;
     keywordHit = true;
@@ -147,7 +199,7 @@ export function extractTotalCandidates(mergedOcrText: string): TotalAmountCandid
       put(hit.yen, kw + hit.tokenScore + lineBonus, `「${label}」付近（${hit.style}）`);
     }
     const next = lines[i + 1];
-    if (next) {
+    if (next && !/^\d{5,9}$/.test(next)) {
       for (const hit of extractScoredMoneyTokens(next)) {
         put(hit.yen, Math.round(kw * 0.82) + hit.tokenScore, `「${label}」の次行（${hit.style}）`);
       }
@@ -155,12 +207,14 @@ export function extractTotalCandidates(mergedOcrText: string): TotalAmountCandid
   }
 
   if (keywordHit && best.size > 0) {
+    applyAmountPassAndFallback(best, amountPassTexts, put);
     return finalizeCandidates(best);
   }
 
-  /** キーワードが無い場合: トークンスコアのみで列挙 */
   const fallback = new Map<number, { score: number; reason: string }>();
+
   for (const line of lines) {
+    if (/^\d{5,9}$/.test(line)) continue;
     for (const hit of extractScoredMoneyTokens(line)) {
       if (YEAR_ONLY.test(String(hit.yen))) continue;
       if (hit.yen < 10) continue;
@@ -174,11 +228,19 @@ export function extractTotalCandidates(mergedOcrText: string): TotalAmountCandid
       }
     }
   }
-  return finalizeCandidates(fallback);
+
+  for (const [yen, v] of fallback.entries()) {
+    put(yen, v.score, v.reason);
+  }
+
+  applyAmountPassAndFallback(best, amountPassTexts, put);
+
+  return finalizeCandidates(best);
 }
 
 function finalizeCandidates(m: Map<number, { score: number; reason: string }>): TotalAmountCandidate[] {
   return [...m.entries()]
+    .filter(([, v]) => v.score >= MIN_SCORE_TO_LIST)
     .map(([yen, v]) => ({ yen, score: v.score, reason: v.reason }))
     .sort((a, b) => {
       if (b.score !== a.score) return b.score - a.score;

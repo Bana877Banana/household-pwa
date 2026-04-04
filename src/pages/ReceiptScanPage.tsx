@@ -83,12 +83,12 @@ export function ReceiptScanPage() {
     try {
       const prepared = await prepareImageForReceiptOcr(sourceBlob);
       setOcrProgress("");
-      const { fullText, refinementTexts } = await runReceiptOcr(prepared, (p) => {
+      const { fullText, refinementTexts, amountPassTexts } = await runReceiptOcr(prepared, (p) => {
         setOcrProgress(p.percent != null ? `${p.status}（${p.percent}%）` : p.status);
       });
       setOcrText(fullText);
       const mergedForTotals = [fullText, ...refinementTexts].filter(Boolean).join("\n\n");
-      const totals = extractTotalCandidates(mergedForTotals);
+      const totals = extractTotalCandidates(mergedForTotals, amountPassTexts);
       setCandidates(totals);
       setMerchantHint(extractMerchantHint(fullText));
       setDateOptions(extractDateCandidates(fullText));

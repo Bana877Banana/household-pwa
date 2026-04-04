@@ -10,6 +10,8 @@ export type ReceiptOcrResult = {
   fullText: string;
   /** キーワード近傍を切り出して再OCRしたテキスト（合計推定用に結合する） */
   refinementTexts: string[];
+  /** 金額専用OCR（右側列・ホワイトリスト・キーワード枠の再読取）のテキスト */
+  amountPassTexts: string[];
 };
 
 export type ReceiptOcrProgress = {
@@ -136,16 +138,46 @@ function mergeOverlappingRects(rects: Rect[], iouThreshold: number): Rect[] {
 }
 
 const MAX_REGION_PASSES = 8;
+const MAX_KEYWORD_AMOUNT_WHITELIST_PASSES = 6;
 
 /**
- * 前処理済み画像に対し、全文OCR後にキーワード行の近傍だけ再OCRする。
+ * 右寄せ金額列になりやすい領域（縦長レシート想定）。
+ * - 画像の右 50% 全体
+ * - 右 48% × 下 55%（合計行が乗りやすい帯）
+ * - 右 52% × 下 45%（やや狭い右下）
+ */
+function buildFixedAmountColumnRects(imgW: number, imgH: number): Rect[] {
+  const lh = Math.floor(0.5 * imgW);
+  const r1: Rect = { left: lh, top: 0, width: imgW - lh, height: imgH };
+  const l2 = Math.floor(0.48 * imgW);
+  const t2 = Math.floor(0.45 * imgH);
+  const r2: Rect = { left: l2, top: t2, width: imgW - l2, height: imgH - t2 };
+  const l3 = Math.floor(0.52 * imgW);
+  const t3 = Math.floor(0.55 * imgH);
+  const r3: Rect = { left: l3, top: t3, width: imgW - l3, height: imgH - t3 };
+  const merged = mergeOverlappingRects([r1, r2, r3], 0.5);
+  return merged.filter((r) => r.width >= 28 && r.height >= 28);
+}
+
+async function restoreDefaultOcrParams(
+  worker: Worker,
+  psmAuto: import("tesseract.js").PSM
+): Promise<void> {
+  await worker.setParameters({
+    tessedit_char_whitelist: "",
+    tessedit_pageseg_mode: psmAuto,
+  });
+}
+
+/**
+ * 前処理済み画像に対し、全文OCR → キーワード近傍再OCR → 金額専用OCR（固定右列＋キーワード枠の数字優先読取）。
  * tesseract.js は動的 import。
  */
 export async function runReceiptOcr(
   prepared: PreparedReceiptImage,
   onProgress?: (p: ReceiptOcrProgress) => void
 ): Promise<ReceiptOcrResult> {
-  const { createWorker } = await import("tesseract.js");
+  const { createWorker, PSM } = await import("tesseract.js");
   const image = prepared.blob;
   const imgW = prepared.width;
   const imgH = prepared.height;
@@ -198,7 +230,38 @@ export async function runReceiptOcr(
       }
     }
 
-    return { fullText, refinementTexts };
+    const amountPassTexts: string[] = [];
+    const pushChunk = (t: string) => {
+      const c = t.trim();
+      if (c.length > 0) amountPassTexts.push(c);
+    };
+
+    await worker.setParameters({
+      tessedit_char_whitelist: "0123456789¥￥,.+-円 ",
+      // WorkerParams の PSM 型と実体（文字列）の整合
+      tessedit_pageseg_mode: PSM.SINGLE_BLOCK as unknown as import("tesseract.js").PSM,
+    });
+
+    const fixedRects = buildFixedAmountColumnRects(imgW, imgH);
+    let ai = 0;
+    const totalAmountSteps = fixedRects.length + Math.min(picked.length, MAX_KEYWORD_AMOUNT_WHITELIST_PASSES);
+    for (const rect of fixedRects) {
+      ai += 1;
+      onProgress?.({ status: `金額列を読み取り中…（${ai}/${totalAmountSteps}）` });
+      const { data: am } = await worker.recognize(image, { rectangle: rect });
+      pushChunk(am.text ?? "");
+    }
+
+    for (let ki = 0; ki < Math.min(picked.length, MAX_KEYWORD_AMOUNT_WHITELIST_PASSES); ki++) {
+      ai += 1;
+      onProgress?.({ status: `金額列を読み取り中…（${ai}/${totalAmountSteps}）` });
+      const { data: am } = await worker.recognize(image, { rectangle: picked[ki] });
+      pushChunk(am.text ?? "");
+    }
+
+    await restoreDefaultOcrParams(worker, PSM.AUTO as unknown as import("tesseract.js").PSM);
+
+    return { fullText, refinementTexts, amountPassTexts };
   } finally {
     if (worker) {
       await worker.terminate().catch(() => undefined);
