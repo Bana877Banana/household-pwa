@@ -15,7 +15,6 @@ import { CategoryNewPage } from "./pages/CategoryNewPage";
 import { MonthlySummaryPage } from "./pages/MonthlySummaryPage";
 import { TransactionEditPage } from "./pages/TransactionEditPage";
 import { TransactionNewPage } from "./pages/TransactionNewPage";
-import { ReceiptScanPage } from "./pages/ReceiptScanPage";
 
 export default function App() {
   return (
@@ -34,7 +33,6 @@ export default function App() {
               <Route element={<HouseholdRequiredLayout />}>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/transactions/new" element={<TransactionNewPage />} />
-                <Route path="/transactions/receipt" element={<ReceiptScanPage />} />
                 <Route path="/transactions/:transactionId/edit" element={<TransactionEditPage />} />
                 <Route path="/summary/month" element={<MonthlySummaryPage />} />
                 <Route path="/categories/new" element={<CategoryNewPage />} />
