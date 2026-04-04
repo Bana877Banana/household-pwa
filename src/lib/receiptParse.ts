@@ -7,6 +7,8 @@ export type TotalAmountCandidate = {
   yen: number;
   /** ユーザー向け説明 */
   reason: string;
+  /** 大きいほど優先（候補の並び順） */
+  score: number;
 };
 
 export type DateCandidate = {
@@ -16,61 +18,107 @@ export type DateCandidate = {
   label: string;
 };
 
-const TOTAL_LINE_HINTS: { needle: string; label: string }[] = [
-  { needle: "総合計", label: "総合計" },
-  { needle: "税込合計", label: "税込合計" },
-  { needle: "税込", label: "税込" },
-  { needle: "お買上金額", label: "お買上金額" },
-  { needle: "お買上げ金額", label: "お買上げ金額" },
-  { needle: "お買上", label: "お買上" },
-  { needle: "合計", label: "合計" },
-  { needle: "現計", label: "現計" },
-  { needle: "ご利用金額", label: "ご利用金額" },
-  { needle: "お支払い金額", label: "お支払い金額" },
-  { needle: "お支払金額", label: "お支払金額" },
-  { needle: "領収金額", label: "領収金額" },
-  { needle: "ご請求金額", label: "ご請求金額" },
-  { needle: "お会計", label: "お会計" },
-  { needle: "会計", label: "会計" },
-  { needle: "小計", label: "小計" },
-  { needle: "総額", label: "総額" },
-  { needle: "AMOUNT", label: "AMOUNT" },
-  { needle: "TOTAL", label: "TOTAL" },
+const TOTAL_LINE_HINTS: { needle: string; label: string; keywordWeight: number }[] = [
+  { needle: "総合計", label: "総合計", keywordWeight: 125 },
+  { needle: "税込合計", label: "税込合計", keywordWeight: 122 },
+  { needle: "税込", label: "税込", keywordWeight: 98 },
+  { needle: "お買上金額", label: "お買上金額", keywordWeight: 118 },
+  { needle: "お買上げ金額", label: "お買上げ金額", keywordWeight: 118 },
+  { needle: "お買上", label: "お買上", keywordWeight: 105 },
+  { needle: "合計", label: "合計", keywordWeight: 108 },
+  { needle: "現計", label: "現計", keywordWeight: 102 },
+  { needle: "ご利用金額", label: "ご利用金額", keywordWeight: 112 },
+  { needle: "お支払い金額", label: "お支払い金額", keywordWeight: 115 },
+  { needle: "お支払金額", label: "お支払金額", keywordWeight: 115 },
+  { needle: "領収金額", label: "領収金額", keywordWeight: 110 },
+  { needle: "ご請求金額", label: "ご請求金額", keywordWeight: 110 },
+  { needle: "お会計", label: "お会計", keywordWeight: 88 },
+  { needle: "会計", label: "会計", keywordWeight: 72 },
+  { needle: "小計", label: "小計", keywordWeight: 58 },
+  { needle: "総額", label: "総額", keywordWeight: 100 },
+  { needle: "AMOUNT", label: "AMOUNT", keywordWeight: 70 },
+  { needle: "TOTAL", label: "TOTAL", keywordWeight: 70 },
+  { needle: "金額", label: "金額", keywordWeight: 62 },
 ];
 
 const YEAR_ONLY = /^(20[0-3]\d|19\d{2})$/;
 
-function normalizeDigits(s: string): string {
-  return s.normalize("NFKC").replace(/,/g, "");
+/** 長い語を先にマッチ（「お会計」が「会計」に吸われないようにする） */
+const TOTAL_LINE_HINTS_LONG_FIRST = [...TOTAL_LINE_HINTS].sort(
+  (a, b) => b.needle.length - a.needle.length
+);
+
+type TokenHit = { yen: number; tokenScore: number; style: string };
+
+/**
+ * 1行から金額らしきトークンを拾い、自然な ¥2,063 形式を高スコア、長い生数字列は低スコアにする。
+ */
+export function extractScoredMoneyTokens(line: string): TokenHit[] {
+  const n = line.normalize("NFKC");
+  const hits: TokenHit[] = [];
+  const seen = new Set<number>();
+
+  const tryAdd = (yen: number, tokenScore: number, style: string) => {
+    if (!Number.isFinite(yen) || yen < 1 || yen > 99_999_999) return;
+    const rawLen = String(yen).length;
+    if (rawLen >= 10) return;
+    if (seen.has(yen)) return;
+    seen.add(yen);
+    hits.push({ yen, tokenScore, style });
+  };
+
+  // ¥2,063 / ￥1,234円（最優先）
+  const reYen = /(¥|￥)\s*(\d{1,3}(?:,\d{3})+|\d{2,9})(?=\s*円|\s|$|[^\d,])/g;
+  let m: RegExpExecArray | null;
+  while ((m = reYen.exec(n)) !== null) {
+    const digits = m[2].replace(/,/g, "");
+    const yen = Number.parseInt(digits, 10);
+    const commaStyle = /^\d{1,3}(?:,\d{3})+$/.test(m[2]);
+    let ts = 88;
+    if (commaStyle) ts += 72;
+    const dl = digits.length;
+    if (dl >= 4 && dl <= 7) ts += 28;
+    if (dl >= 9) ts -= 45;
+    tryAdd(yen, ts, commaStyle ? "¥表記+桁区切り" : "¥表記");
+  }
+
+  // 2,063円
+  const reEn = /(\d{1,3}(?:,\d{3})+)\s*円/g;
+  while ((m = reEn.exec(n)) !== null) {
+    const yen = Number.parseInt(m[1].replace(/,/g, ""), 10);
+    tryAdd(yen, 95 + 70, "桁区切り+円");
+  }
+
+  // 残り: 単独のカンマ付き数字（記号なし）
+  const reCommaNum = /(?:^|[^\d,])(\d{1,3}(?:,\d{3})+)(?![\d,])/g;
+  while ((m = reCommaNum.exec(n)) !== null) {
+    const yen = Number.parseInt(m[1].replace(/,/g, ""), 10);
+    tryAdd(yen, 55 + 70, "桁区切り");
+  }
+
+  return hits;
 }
 
-/** 文字列内の円らしき数値をすべて拾う */
+/** @deprecated 互換用。スコアなしの数値一覧が必要な場合に使う */
 export function extractYenNumbersFromLine(line: string): number[] {
-  const n = normalizeDigits(line);
-  const out: number[] = [];
-  const re = /(?:¥|￥)?\s*(\d{1,3}(?:,\d{3})+|\d+)\s*(?:円)?/g;
-  let m: RegExpExecArray | null;
-  while ((m = re.exec(n)) !== null) {
-    const raw = m[1].replace(/,/g, "");
-    const v = Number.parseInt(raw, 10);
-    if (Number.isFinite(v) && v > 0 && v <= 99_999_999) {
-      out.push(v);
+  return extractScoredMoneyTokens(line).map((h) => h.yen);
+}
+
+function pickBestNeedle(line: string): { label: string; weight: number } | null {
+  const t = line.normalize("NFKC");
+  for (const { needle, label, keywordWeight } of TOTAL_LINE_HINTS_LONG_FIRST) {
+    if (t.includes(needle)) {
+      return { label, weight: keywordWeight };
     }
   }
-  return out;
-}
-
-function scoreForHint(label: string): number {
-  if (label === "小計") return 50;
-  if (label === "会計") return 60;
-  return 100;
+  return null;
 }
 
 /**
- * キーワード行とその次行から金額候補を集める。同一金額はより強い根拠で上書き。
+ * 全文OCR＋領域再OCRを結合したテキストから、スコア順で複数候補を返す。
  */
-export function extractTotalCandidates(ocrText: string): TotalAmountCandidate[] {
-  const text = ocrText.normalize("NFKC");
+export function extractTotalCandidates(mergedOcrText: string): TotalAmountCandidate[] {
+  const text = mergedOcrText.normalize("NFKC");
   const lines = text.split(/\r?\n/).map((l) => l.trim());
 
   const best = new Map<number, { score: number; reason: string }>();
@@ -78,52 +126,65 @@ export function extractTotalCandidates(ocrText: string): TotalAmountCandidate[] 
   const put = (yen: number, score: number, reason: string) => {
     if (!Number.isFinite(yen) || yen < 1 || yen > 99_999_999) return;
     const cur = best.get(yen);
-    if (!cur || score >= cur.score) {
+    if (!cur || score > cur.score) {
       best.set(yen, { score, reason });
     }
   };
 
+  let keywordHit = false;
+
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
     if (!line) continue;
-    for (const { needle, label } of TOTAL_LINE_HINTS) {
-      if (!line.includes(needle)) continue;
-      const base = scoreForHint(label);
-      for (const y of extractYenNumbersFromLine(line)) {
-        put(y, base + 5, `「${label}」の行に含まれる金額`);
-      }
-      const next = lines[i + 1];
-      if (next) {
-        for (const y of extractYenNumbersFromLine(next)) {
-          put(y, base, `「${label}」の次の行の金額`);
-        }
+    const needleHit = pickBestNeedle(line);
+    if (!needleHit) continue;
+    keywordHit = true;
+    const kw = needleHit.weight;
+    const label = needleHit.label;
+
+    for (const hit of extractScoredMoneyTokens(line)) {
+      const lineBonus = 22;
+      put(hit.yen, kw + hit.tokenScore + lineBonus, `「${label}」付近（${hit.style}）`);
+    }
+    const next = lines[i + 1];
+    if (next) {
+      for (const hit of extractScoredMoneyTokens(next)) {
+        put(hit.yen, Math.round(kw * 0.82) + hit.tokenScore, `「${label}」の次行（${hit.style}）`);
       }
     }
   }
 
-  const keywordHits = [...best.entries()]
-    .map(([yen, v]) => ({ yen, reason: v.reason }))
-    .sort((a, b) => b.yen - a.yen);
-
-  if (keywordHits.length > 0) {
-    return keywordHits.slice(0, 12);
+  if (keywordHit && best.size > 0) {
+    return finalizeCandidates(best);
   }
 
-  /** キーワードが無い場合: 文中の金額を多めに列挙（ユーザーが選ぶ） */
-  const fallback = new Map<number, string>();
+  /** キーワードが無い場合: トークンスコアのみで列挙 */
+  const fallback = new Map<number, { score: number; reason: string }>();
   for (const line of lines) {
-    for (const y of extractYenNumbersFromLine(line)) {
-      if (YEAR_ONLY.test(String(y))) continue;
-      if (y < 10) continue;
-      if (!fallback.has(y)) {
-        fallback.set(y, "OCRテキスト内の数値（合計と一致しない場合があります）");
+    for (const hit of extractScoredMoneyTokens(line)) {
+      if (YEAR_ONLY.test(String(hit.yen))) continue;
+      if (hit.yen < 10) continue;
+      const sc = hit.tokenScore + 15;
+      const cur = fallback.get(hit.yen);
+      if (!cur || sc > cur.score) {
+        fallback.set(hit.yen, {
+          score: sc,
+          reason: `OCR内の数値（${hit.style}・合計と一致しない場合があります）`,
+        });
       }
     }
   }
-  return [...fallback.entries()]
-    .sort((a, b) => b[0] - a[0])
-    .slice(0, 15)
-    .map(([yen, reason]) => ({ yen, reason }));
+  return finalizeCandidates(fallback);
+}
+
+function finalizeCandidates(m: Map<number, { score: number; reason: string }>): TotalAmountCandidate[] {
+  return [...m.entries()]
+    .map(([yen, v]) => ({ yen, score: v.score, reason: v.reason }))
+    .sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score;
+      return b.yen - a.yen;
+    })
+    .slice(0, 16);
 }
 
 export function extractDateCandidates(ocrText: string, max = 6): DateCandidate[] {

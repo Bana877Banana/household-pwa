@@ -39,3 +39,14 @@ src/App.tsx — BrowserRouter + ルート
 サインアップページ
 <http://localhost:5173/signup>
 
+
+■デプロイ
+・ビルド
+npm run build
+
+・githubにプッシュ
+git add .
+git commit -m "OCR追加"
+git push
+
+・vercelに自動的にデプロイ
