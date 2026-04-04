@@ -1051,3 +1051,210 @@ a.btn.primary {
     border-color: #b91c1c;
   }
 }
+
+/* レシートOCR */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.receipt-scan-screen .form-screen__title {
+  margin-top: 0;
+}
+
+.receipt-scan__notice-title {
+  margin: 0 0 0.35rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.receipt-scan__notice-body {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.receipt-scan__pick-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.receipt-scan__pick-btn {
+  width: 100%;
+  min-height: 52px;
+  font-size: 1.02rem;
+  font-weight: 700;
+}
+
+.receipt-scan__hint {
+  margin: 0.65rem 0 0;
+  line-height: 1.45;
+}
+
+.receipt-scan__preview-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.receipt-scan__preview {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--bg);
+}
+
+.receipt-scan__preview-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  vertical-align: middle;
+}
+
+.receipt-scan__ocr-btn {
+  width: 100%;
+  min-height: 52px;
+  font-size: 1.02rem;
+  font-weight: 700;
+}
+
+.receipt-scan__loading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.receipt-scan__err {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.receipt-scan__form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.receipt-scan__field-hint {
+  margin: -0.35rem 0 0;
+}
+
+.receipt-scan__candidates {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.receipt-scan__candidate {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2rem;
+  text-align: left;
+  padding: 0.75rem 0.9rem;
+  border-radius: 12px;
+  border: 2px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+  min-height: 52px;
+}
+
+.receipt-scan__candidate--active {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 14%, var(--surface));
+}
+
+.receipt-scan__candidate-yen {
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.receipt-scan__candidate-reason {
+  line-height: 1.35;
+  text-align: left;
+}
+
+.receipt-scan__amount-field {
+  margin: 0;
+}
+
+.receipt-scan__amount-input {
+  font-size: 1.05rem;
+}
+
+.receipt-scan__hint-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.receipt-scan__merchant {
+  margin: 0;
+  line-height: 1.45;
+  word-break: break-word;
+}
+
+.receipt-scan__date-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.receipt-scan__chip {
+  min-height: 44px;
+  font-size: 0.9rem;
+}
+
+.receipt-scan__chip--active {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 14%, var(--surface));
+}
+
+.receipt-scan__details summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: 0.35rem;
+}
+
+.receipt-scan__ocr-pre {
+  margin: 0;
+  padding: 0.75rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  font-size: 0.78rem;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 12rem;
+  overflow: auto;
+}
+
+.receipt-scan__submit {
+  width: 100%;
+  min-height: 52px;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.receipt-scan__footer-note {
+  margin: 0;
+  text-align: center;
+  line-height: 1.45;
+}

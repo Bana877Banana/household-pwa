@@ -1,6 +1,6 @@
 /**
- * 収支登録フォームへの事前入力（将来: OCR など複数ソースで共通化）
- * MVP では手入力のみ。ナビゲーション state で渡す場合に使用。
+ * 収支登録フォームへの事前入力（手入力 / レシートOCR など）。
+ * ナビゲーション state で渡す場合に使用。
  */
 export type TransactionFormPrefillSource = "manual" | "ocr";
 

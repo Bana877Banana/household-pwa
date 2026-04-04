@@ -138,6 +138,11 @@ export function TransactionNewPage() {
         </Link>
         <h1 className="form-screen__title">収支を登録</h1>
         <p className="form-screen__sub muted small">{household.name}</p>
+        <p className="form-screen__sub muted small">
+          <Link to="/transactions/receipt" className="link">
+            レシート写真から金額を入力
+          </Link>
+        </p>
       </header>
 
       <form className="form-screen__body" onSubmit={(e) => void onSubmit(e)}>
