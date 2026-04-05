@@ -339,14 +339,17 @@ export function RecurringRuleEditorPage() {
 
           <label className="field">
             <span className="label">開始日（周期の基準にもなります）</span>
-            <input
-              type="date"
-              value={startDate}
-              onChange={(ev) => {
-                setStartDate(ev.target.value);
-                setFieldErrors((p) => ({ ...p, startDate: undefined }));
-              }}
-            />
+            <span className="field-date-shell">
+              <input
+                type="date"
+                className="input-date"
+                value={startDate}
+                onChange={(ev) => {
+                  setStartDate(ev.target.value);
+                  setFieldErrors((p) => ({ ...p, startDate: undefined }));
+                }}
+              />
+            </span>
             {fieldErrors.startDate ? (
               <p className="field-error" role="alert">
                 {fieldErrors.startDate}
@@ -356,14 +359,17 @@ export function RecurringRuleEditorPage() {
 
           <label className="field">
             <span className="label">終了日（任意・空欄で無期限）</span>
-            <input
-              type="date"
-              value={endDateRaw}
-              onChange={(ev) => {
-                setEndDateRaw(ev.target.value);
-                setFieldErrors((p) => ({ ...p, endDate: undefined }));
-              }}
-            />
+            <span className="field-date-shell">
+              <input
+                type="date"
+                className="input-date"
+                value={endDateRaw}
+                onChange={(ev) => {
+                  setEndDateRaw(ev.target.value);
+                  setFieldErrors((p) => ({ ...p, endDate: undefined }));
+                }}
+              />
+            </span>
             {fieldErrors.endDate ? (
               <p className="field-error" role="alert">
                 {fieldErrors.endDate}
