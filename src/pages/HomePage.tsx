@@ -81,6 +81,9 @@ export function HomePage() {
       <section className="card home-tools">
         <p className="label">管理</p>
         <div className="home-tools__stack">
+          <Link to="/recurring" className="btn secondary home-tools__btn">
+            繰り返し収支（固定費）
+          </Link>
           <Link to="/summary/month" className="btn secondary home-tools__btn">
             月次集計
           </Link>

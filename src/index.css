@@ -1051,3 +1051,90 @@ a.btn.primary {
     border-color: #b91c1c;
   }
 }
+
+/* 繰り返し収支（固定費）ルール */
+.recurring-list-screen__body {
+  padding-bottom: calc(2rem + var(--safe-bottom));
+}
+
+.recurring-list-screen__actions {
+  margin: 0 0 1rem;
+}
+
+.recurring-list-screen__empty {
+  padding: 1rem 1.1rem;
+}
+
+.recurring-rule-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.recurring-rule-list__item {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.recurring-rule-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.9rem 1rem;
+  background: var(--bg);
+  -webkit-tap-highlight-color: color-mix(in srgb, var(--accent) 25%, transparent);
+}
+
+.recurring-rule-card:active {
+  opacity: 0.92;
+}
+
+.recurring-rule-card__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.recurring-rule-card__amount {
+  margin-left: auto;
+  font-weight: 800;
+  font-size: 1.05rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.recurring-rule-card__line {
+  margin: 0.25rem 0 0;
+  font-size: 0.92rem;
+  line-height: 1.45;
+  text-align: left;
+}
+
+.recurring-rule-card__memo {
+  margin: 0.45rem 0 0;
+  text-align: left;
+}
+
+.recurring-rule-card__tap {
+  margin: 0.55rem 0 0;
+  text-align: left;
+}
+
+.field-hint-below {
+  margin: 0.35rem 0 0;
+  text-align: left;
+  line-height: 1.4;
+}
+
+.form-sticky-actions--stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
