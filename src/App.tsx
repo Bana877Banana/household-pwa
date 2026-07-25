@@ -17,6 +17,7 @@ import { TransactionEditPage } from "./pages/TransactionEditPage";
 import { TransactionNewPage } from "./pages/TransactionNewPage";
 import { RecurringRuleEditorPage } from "./pages/RecurringRuleEditorPage";
 import { RecurringRulesListPage } from "./pages/RecurringRulesListPage";
+import { ShoppingPage } from "./pages/ShoppingPage";
 
 export default function App() {
   return (
@@ -43,6 +44,7 @@ export default function App() {
                 <Route path="/categories/new" element={<CategoryNewPage />} />
                 <Route path="/categories/:categoryId/edit" element={<CategoryEditPage />} />
                 <Route path="/categories" element={<CategoriesPage />} />
+                <Route path="/shopping" element={<ShoppingPage />} />
               </Route>
             </Route>
 
