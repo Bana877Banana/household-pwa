@@ -1,4 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { AppShell } from "./components/AppShell";
+import { TransactionsPage } from "./pages/TransactionsPage";
+import { SettingsPage } from "./pages/SettingsPage";
 import { FloralBackground } from "./components/FloralBackground";
 import { AuthLayout } from "./components/AuthLayout";
 import { HouseholdRequiredLayout } from "./components/HouseholdRequiredLayout";
@@ -36,7 +39,10 @@ export default function App() {
               <Route path="/household/join" element={<HouseholdJoinPage />} />
 
               <Route element={<HouseholdRequiredLayout />}>
+                <Route element={<AppShell />}>
                 <Route path="/" element={<HomePage />} />
+                <Route path="/transactions" element={<TransactionsPage />} />
+                <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/transactions/new" element={<TransactionNewPage />} />
                 <Route path="/recurring" element={<RecurringRulesListPage />} />
                 <Route path="/recurring/new" element={<RecurringRuleEditorPage />} />
@@ -47,6 +53,7 @@ export default function App() {
                 <Route path="/categories/:categoryId/edit" element={<CategoryEditPage />} />
                 <Route path="/categories" element={<CategoriesPage />} />
                 <Route path="/shopping" element={<ShoppingPage />} />
+                </Route>
               </Route>
             </Route>
 
