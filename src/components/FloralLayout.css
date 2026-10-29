@@ -159,3 +159,12 @@ input:focus, select:focus, textarea.input-textarea:focus, .field-date-shell .inp
 }
 input:focus-visible, select:focus-visible, textarea:focus-visible,
 button:focus-visible, a:focus-visible { outline-color:#d56d91; }
+
+/* B1 corner arrangement: artwork anchors to the page edge, not the text baseline. */
+.floral-home__header { min-height:3.6rem; }
+.floral-home__brand { padding-left:3.45rem; min-height:3.5rem; }
+.floral-home__sprig { left:-1.65rem; top:-1.35rem; width:6.2rem; height:6.2rem; }
+@media (max-width:370px) {
+  .floral-home__brand { padding-left:3rem; }
+  .floral-home__sprig { width:5.7rem; height:5.7rem; }
+}
