@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
+import { AppIcon } from "../components/AppIcon";
 import { fetchMonthlySummary } from "../api/monthlySummary";
 import { useAuth } from "../contexts/AuthContext";
 import { useHousehold } from "../contexts/HouseholdContext";
@@ -9,10 +10,10 @@ import type { MonthlySummary } from "../types/summary";
 
 const yen = (value: number) => `${value.toLocaleString("ja-JP")}円`;
 const shortcuts = [
-  { to: "/transactions/new", icon: "✎", label: "収支を登録", tone: "rose" },
-  { to: "/shopping", icon: "☷", label: "買い物メモ", tone: "honey" },
-  { to: "/transactions", icon: "◷", label: "収支の一覧", tone: "lilac" },
-  { to: "/summary/month", icon: "▥", label: "集計・レポート", tone: "mint" },
+  { to: "/transactions/new", icon: "pencil", label: "収支を登録", tone: "rose" },
+  { to: "/shopping", icon: "shopping", label: "買い物メモ", tone: "honey" },
+  { to: "/transactions", icon: "list", label: "収支の一覧", tone: "lilac" },
+  { to: "/summary/month", icon: "chart", label: "集計・レポート", tone: "mint" },
 ];
 
 export function HomePage() {
@@ -62,8 +63,8 @@ export function HomePage() {
   return <main className="screen floral-home">
     {notice ? <p className="save-banner" role="status">{notice}</p> : null}
     <header className="floral-home__header">
-      <span className="floral-home__brand"><span aria-hidden="true">🌸</span> ふたりの家計簿</span>
-      <Link to="/settings" className="floral-home__settings" aria-label="設定">⚙</Link>
+      <span className="floral-home__brand"><span aria-hidden="true"><AppIcon name="flower" size={25} /></span> 家計簿</span>
+      <Link to="/settings" className="floral-home__settings" aria-label="設定"><AppIcon name="settings" size={22}/></Link>
     </header>
     <section className="card floral-balance" aria-label="今月の収支">
       <p className="floral-balance__month">{formatMonthLabelJa(ym)}</p>
@@ -76,7 +77,7 @@ export function HomePage() {
     </section>
     <nav className="floral-shortcuts" aria-label="よく使う機能">
       {shortcuts.map(s => <Link key={s.to} to={s.to} className={`floral-shortcut floral-shortcut--${s.tone}`}>
-        <span className="floral-shortcut__icon" aria-hidden="true">{s.icon}</span><span>{s.label}</span><span aria-hidden="true">›</span>
+        <span className="floral-shortcut__icon" aria-hidden="true"><AppIcon name={s.icon as "pencil" | "shopping" | "list" | "chart"} size={26}/></span><span>{s.label}</span><span aria-hidden="true">›</span>
       </Link>)}
     </nav>
     <section className="card floral-recent" aria-labelledby="floral-recent-heading">
