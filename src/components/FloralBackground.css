@@ -1,0 +1,71 @@
+/* Floral theme A — soft, accessible, low-motion background */
+:root {
+  color-scheme: light;
+  --bg: #fff7f3;
+  --surface: rgba(255, 255, 255, 0.93);
+  --border: #f1dfe0;
+  --text: #45363d;
+  --muted: #806d77;
+  --accent: #c95f83;
+  --accent-dim: #a94469;
+  --danger: #b63850;
+  --radius: 18px;
+}
+body { background: #fff7f3; }
+#root { isolation: isolate; }
+.screen { position: relative; z-index: 1; }
+.card, .shopping-row, .cat-row, .dialog-sheet {
+  box-shadow: 0 6px 24px rgba(143, 77, 97, 0.065);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+}
+input, select, textarea.input-textarea, .tx-card, .recurring-rule-card,
+.type-segment__btn, .summary-month-bar__btn, .shopping-row__box {
+  background: rgba(255,255,255,0.88);
+}
+.btn.primary, a.btn.primary { color: #fff; }
+.btn.secondary { background: rgba(255,255,255,0.75); color: var(--accent-dim); }
+.btn.danger { color: #fff; }
+.form-sticky-actions {
+  background: linear-gradient(180deg, transparent 0%, rgba(255,247,243,.97) 35%);
+}
+.tx-badge--expense { color: #a9314c; background: #fff0f1; }
+.tx-badge--income { color: #226c57; background: #eaf8ef; }
+.save-banner { background: #fff1f4; }
+.floral-background {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 10% 4%, #fff0ed 0, transparent 48%),
+              radial-gradient(ellipse at 95% 92%, #ffece7 0, transparent 48%),
+              #fff7f3;
+}
+.floral-background__flower {
+  position: absolute;
+  left: var(--flower-left);
+  top: -110px;
+  width: var(--flower-size);
+  height: var(--flower-size);
+  opacity: var(--flower-opacity);
+  animation: floral-drift var(--flower-duration) linear infinite;
+  animation-delay: var(--flower-delay);
+  will-change: transform;
+}
+.floral-background__flower svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  animation: floral-turn var(--flower-rotation) linear infinite;
+}
+.floral-background__flower:nth-child(even) svg { animation-direction: reverse; }
+@keyframes floral-drift {
+  from { transform: translate3d(0, -10vh, 0); }
+  to { transform: translate3d(var(--flower-sway), 125vh, 0); }
+}
+@keyframes floral-turn { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .floral-background__flower, .floral-background__flower svg { animation: none; }
+  .floral-background__flower { top: var(--flower-static-top); }
+}
