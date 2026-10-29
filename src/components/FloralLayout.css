@@ -46,3 +46,10 @@
 .bottom-nav__label { font-size:.64rem; white-space:nowrap; }
 .form-sticky-actions { bottom:calc(4rem + var(--safe-bottom)); z-index:5; }
 @media (prefers-reduced-motion: reduce) { .bottom-nav { backdrop-filter:none; } }
+
+/* Keep the icon system consistent with the reference mockup. */
+.floral-home__brand { display:inline-flex; align-items:center; gap:.4rem; }
+.floral-home__brand > span { display:inline-flex; }
+.floral-home__settings { display:inline-flex; align-items:center; justify-content:center; }
+.floral-shortcut__icon, .bottom-nav__icon { display:inline-flex; align-items:center; justify-content:center; }
+.bottom-nav__link--active { font-weight:700; }
