@@ -53,3 +53,85 @@
 .floral-home__settings { display:inline-flex; align-items:center; justify-content:center; }
 .floral-shortcut__icon, .bottom-nav__icon { display:inline-flex; align-items:center; justify-content:center; }
 .bottom-nav__link--active { font-weight:700; }
+
+/* Shared visual language for secondary screens. Keep forms and data behavior intact. */
+.screen:not(.floral-home) .form-screen__head,
+.screen:not(.floral-home) .floral-page__heading {
+  padding: .2rem .1rem .35rem;
+}
+.form-screen__title, .floral-page__heading h1 { color:#493944; font-size:1.45rem; letter-spacing:-.025em; }
+.form-back, .cat-manage-link, .shopping-note-toggle { color:#bd5477; }
+.form-screen__sub { color:#8e7d84; }
+.card, .tx-card, .recurring-rule-card, .cat-row, .shopping-row {
+  border-color:#f0dfe2;
+  border-radius:19px;
+  background:rgba(255,255,255,.93);
+  box-shadow:0 5px 20px rgba(131,75,92,.055);
+}
+.form-stack.card { padding:1.3rem; }
+.field .label, .label { color:#76676f; text-transform:none; letter-spacing:0; }
+input, select, textarea.input-textarea, .field-date-shell .input-date {
+  background:#fffdfc;
+  border:1px solid #e9dfe1;
+  color:#493944;
+  border-radius:12px;
+}
+input:focus, select:focus, textarea.input-textarea:focus, .field-date-shell .input-date:focus {
+  outline:2px solid #dc9bb1;
+  outline-offset:1px;
+}
+.type-segment__btn {
+  border:1.5px solid #e9dfe1;
+  border-radius:14px;
+  background:#fffdfc;
+  color:#796c74;
+}
+.type-segment__btn--active {
+  border-color:#d56d91;
+  background:#ffedf2;
+  color:#a73f63;
+}
+.type-segment__btn--active:nth-child(2) {
+  border-color:#71bba2;
+  background:#e6f7ee;
+  color:#26775e;
+}
+.btn.primary, a.btn.primary { background:linear-gradient(160deg,#dc7796,#b84e72); color:white; border-radius:14px; }
+.btn.secondary { background:#fffaf9; border:1px solid #eedde1; color:#a45272; border-radius:14px; }
+.form-sticky-actions {
+  bottom:calc(4.1rem + var(--safe-bottom));
+  background:linear-gradient(180deg,transparent,rgba(255,247,243,.98) 32%);
+}
+.form-screen, .shopping-page, .summary-page, .cat-page, .recurring-list-screen__body {
+  padding-bottom:calc(8.5rem + var(--safe-bottom));
+}
+.summary-month-bar { border-radius:18px; background:#fffdfb; }
+.summary-month-bar__btn { color:#bc597b; border-color:#f1dfe4; background:#fff5f7; }
+.summary-month-bar__label { color:#5a4852; }
+.summary-totals { background:rgba(255,255,255,.96); }
+.summary-total-row__v--income { color:#249b77; }
+.summary-total-row__v--expense, .summary-balance--minus { color:#c95676; }
+.summary-total-row--balance .summary-total-row__v { font-size:1.45rem; }
+.summary-cat-row__track { height:9px; background:#f7e8ed; }
+.summary-cat-row__bar { background:linear-gradient(90deg,#eeb0c4,#ce688d); }
+.shopping-add { border-radius:20px; background:#fffefd; }
+.shopping-add__btn { min-width:4.6rem; }
+.shopping-section-title { color:#846b77; font-size:.92rem; letter-spacing:0; }
+.shopping-row { border-radius:15px; min-height:64px; }
+.shopping-row__box { border-color:#d8b7c4; background:#fff; border-radius:7px; }
+.shopping-row--checked { opacity:.7; background:#faf5f5; }
+.shopping-row--checked .shopping-row__box { background:#f7dce5; border-color:#d47e9b; }
+.shopping-row--checked .shopping-row__name { color:#8b7b81; }
+.shopping-clear-checked { color:#b95270; }
+.tx-list { gap:.55rem; }
+.tx-card { border-radius:16px; background:#fffdfd; }
+.tx-badge--expense { color:#b64e6e; background:#ffedf1; }
+.tx-badge--income { color:#257e62; background:#e5f5ec; }
+.tx-card__amount { color:#c65376; }
+.cat-row { border-radius:15px; }
+.cat-row__link { color:#b75073; }
+.recurring-rule-card { border-radius:16px; }
+.floral-settings__links .btn { justify-content:flex-start; padding-left:1.1rem; }
+.dialog-backdrop { background:rgba(59,36,49,.36); }
+.dialog-sheet { border-radius:22px; background:#fffdfd; box-shadow:0 18px 48px rgba(89,48,63,.19); }
+@media (prefers-reduced-motion: reduce) { .summary-cat-row__bar { transition:none; } }
