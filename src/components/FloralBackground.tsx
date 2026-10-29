@@ -33,7 +33,7 @@ function Flower({ index }: { index: number }) {
   const palette = [
     ["#f4a6ba", "#ffd6e0", "#f4c66b"],
     ["#ffe0d7", "#f6b3ae", "#f3c36c"],
-    ["#ffffff", "#fce2d9", "#f2c36e"],
+    ["#fffefd", "#e8b7c5", "#e9b75f"],
     ["#f5b8c8", "#fbe1e8", "#edc277"],
   ][index % 4];
   return (
@@ -41,7 +41,9 @@ function Flower({ index }: { index: number }) {
       {Array.from({ length: 5 }, (_, i) => (
         <ellipse key={i} cx="50" cy="27" rx="17" ry="27"
           transform={`rotate(${i * 72} 50 50)`}
-          fill={i % 2 === 0 ? palette[0] : palette[1]} />
+          fill={i % 2 === 0 ? palette[0] : palette[1]}
+          stroke={index % 4 === 2 ? "#dfacba" : "none"}
+          strokeWidth={index % 4 === 2 ? 2.6 : 0} />
       ))}
       <circle cx="50" cy="50" r="12" fill={palette[2]} />
       <circle cx="46" cy="46" r="3" fill="#fff8d7" opacity=".8" />
