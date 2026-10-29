@@ -1,4 +1,5 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { FloralBackground } from "./components/FloralBackground";
 import { AuthLayout } from "./components/AuthLayout";
 import { HouseholdRequiredLayout } from "./components/HouseholdRequiredLayout";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -22,6 +23,7 @@ import { ShoppingPage } from "./pages/ShoppingPage";
 export default function App() {
   return (
     <BrowserRouter>
+      <FloralBackground />
       <AuthProvider>
         <HouseholdProvider>
           <Routes>
