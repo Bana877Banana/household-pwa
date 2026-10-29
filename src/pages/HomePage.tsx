@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { AppIcon } from "../components/AppIcon";
+import { FloralSprig } from "../components/FloralSprig";
 import { fetchMonthlySummary } from "../api/monthlySummary";
 import { useAuth } from "../contexts/AuthContext";
 import { useHousehold } from "../contexts/HouseholdContext";
@@ -63,7 +64,7 @@ export function HomePage() {
   return <main className="screen floral-home">
     {notice ? <p className="save-banner" role="status">{notice}</p> : null}
     <header className="floral-home__header">
-      <span className="floral-home__brand"><span aria-hidden="true"><AppIcon name="flower" size={25} /></span> 家計簿</span>
+      <span className="floral-home__brand"><FloralSprig /> <span>家計簿</span></span>
       <Link to="/settings" className="floral-home__settings" aria-label="設定"><AppIcon name="settings" size={22}/></Link>
     </header>
     <section className="card floral-balance" aria-label="今月の収支">
