@@ -13,20 +13,20 @@ type FlowerStyle = CSSProperties & {
 };
 
 const flowers = [
-  { x: 3, size: 68, opacity: .28, duration: 69, delay: -48, rotation: 82, sway: 30, top: 7 },
-  { x: 82, size: 56, opacity: .24, duration: 83, delay: -15, rotation: 57, sway: -26, top: 17 },
-  { x: 14, size: 33, opacity: .23, duration: 58, delay: -28, rotation: 93, sway: 25, top: 31 },
-  { x: 90, size: 72, opacity: .22, duration: 97, delay: -69, rotation: 77, sway: -30, top: 44 },
-  { x: 61, size: 37, opacity: .20, duration: 74, delay: -51, rotation: 62, sway: 22, top: 58 },
-  { x: 1, size: 51, opacity: .24, duration: 88, delay: -77, rotation: 105, sway: 38, top: 72 },
-  { x: 72, size: 29, opacity: .25, duration: 66, delay: -36, rotation: 71, sway: -20, top: 85 },
-  { x: 36, size: 42, opacity: .18, duration: 91, delay: -8, rotation: 89, sway: 29, top: 93 },
-  { x: 96, size: 84, opacity: .31, duration: 101, delay: -46, rotation: 96, sway: -16, top: 9 },
-  { x: -3, size: 89, opacity: .30, duration: 87, delay: -33, rotation: 78, sway: 25, top: 62 },
-  { x: 87, size: 41, opacity: .29, duration: 63, delay: -57, rotation: 61, sway: -14, top: 78 },
-  { x: 5, size: 36, opacity: .27, duration: 72, delay: -12, rotation: 70, sway: 12, top: 24 },
-  { x: 49, size: 26, opacity: .19, duration: 94, delay: -63, rotation: 86, sway: 24, top: 41 },
-  { x: 94, size: 56, opacity: .25, duration: 82, delay: -27, rotation: 88, sway: -25, top: 94 },
+  { x: 3, size: 68, opacity: .43, duration: 69, delay: -48, rotation: 82, sway: 30, top: 7 },
+  { x: 82, size: 56, opacity: .39, duration: 83, delay: -15, rotation: 57, sway: -26, top: 17 },
+  { x: 14, size: 33, opacity: .38, duration: 58, delay: -28, rotation: 93, sway: 25, top: 31 },
+  { x: 90, size: 72, opacity: .37, duration: 97, delay: -69, rotation: 77, sway: -30, top: 44 },
+  { x: 61, size: 37, opacity: .35, duration: 74, delay: -51, rotation: 62, sway: 22, top: 58 },
+  { x: 1, size: 51, opacity: .39, duration: 88, delay: -77, rotation: 105, sway: 38, top: 72 },
+  { x: 72, size: 29, opacity: .40, duration: 66, delay: -36, rotation: 71, sway: -20, top: 85 },
+  { x: 36, size: 42, opacity: .32, duration: 91, delay: -8, rotation: 89, sway: 29, top: 93 },
+  { x: 96, size: 84, opacity: .46, duration: 101, delay: -46, rotation: 96, sway: -16, top: 9 },
+  { x: -3, size: 89, opacity: .45, duration: 87, delay: -33, rotation: 78, sway: 25, top: 62 },
+  { x: 87, size: 41, opacity: .43, duration: 63, delay: -57, rotation: 61, sway: -14, top: 78 },
+  { x: 5, size: 36, opacity: .42, duration: 72, delay: -12, rotation: 70, sway: 12, top: 24 },
+  { x: 49, size: 26, opacity: .33, duration: 94, delay: -63, rotation: 86, sway: 24, top: 41 },
+  { x: 94, size: 56, opacity: .40, duration: 82, delay: -27, rotation: 88, sway: -25, top: 94 },
 ];
 
 function Flower({ index }: { index: number }) {
