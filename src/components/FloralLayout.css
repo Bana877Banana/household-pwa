@@ -1,3 +1,8 @@
+/* Floral colors override the legacy teal/dark theme across color schemes. */
+:root { color-scheme:light; --bg:#fff7f3; --surface:rgba(255,255,255,.93); --border:#f1dfe0; --text:#45363d; --muted:#806d77; --accent:#c95f83; --accent-dim:#a94469; --danger:#b63850; --radius:18px; }
+.btn.primary { background:linear-gradient(165deg,#dc7796,#b84e72); color:#fff; }
+.btn.secondary { color:#9a5271; border-color:#f1dfe0; background:rgba(255,255,255,.8); }
+@media (prefers-color-scheme: light) { :root { --bg:#fff7f3; --surface:rgba(255,255,255,.93); --border:#f1dfe0; --text:#45363d; --muted:#806d77; --accent:#c95f83; --accent-dim:#a94469; --danger:#b63850; } }
 /* App-level floral layout: compact mobile dashboard */
 .screen { padding-bottom: calc(6.8rem + var(--safe-bottom)); }
 .floral-home { gap: 1.15rem; }
