@@ -203,3 +203,26 @@ button:focus-visible, a:focus-visible { outline-color:#d56d91; }
     max-height: 8.8rem;
   }
 }
+
+/* Keep form submit controls in the document flow on iOS/PWA.
+   Fixed actions could be hidden behind the fixed bottom navigation. */
+.form-screen .form-sticky-actions {
+  position: static;
+  left: auto;
+  bottom: auto;
+  transform: none;
+  width: 100%;
+  max-width: none;
+  padding: 0.75rem 0 1rem;
+  background: transparent;
+  z-index: auto;
+  flex-shrink: 0;
+}
+.form-screen .form-sticky-actions .btn-save {
+  display: block;
+  width: 100%;
+  min-height: 52px;
+}
+.form-screen .form-screen__body {
+  padding-bottom: calc(7rem + var(--safe-bottom));
+}
